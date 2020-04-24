@@ -135,6 +135,11 @@ int board_early_init_f(void)
 #endif
 	setup_iomux_uart();
 
+	/* Poweron gpio0 resources for ram straps */
+	ret = sc_pm_set_resource_power_mode(-1, SC_R_GPIO_0, SC_PM_PW_MODE_ON);
+        if (ret)
+                return ret;
+
 	return 0;
 }
 

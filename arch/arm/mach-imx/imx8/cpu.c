@@ -34,6 +34,7 @@
 #include <asm/arch/power-domain.h>
 #include <spl.h>
 #include <asm/arch/lpcg.h>
+#include <seco_imx8_env.h>
 
 DECLARE_GLOBAL_DATA_PTR;
 
@@ -1332,9 +1333,25 @@ int dram_init(void)
 	sc_rm_mr_t mr;
 	sc_faddr_t start, end, end1, end2;
 	int err;
+#if defined CONFIG_TARGET_SECO_IMX8QM_C26
+	unsigned long long sdram_size;
+        
+        if(C26_IS_1GB)
+                sdram_size = 0x0;
+        if(C26_IS_2GB)
+                sdram_size = 0x0;
+        if(C26_IS_4GB)
+                sdram_size = PHYS_DRAM_IS_2GB;
+        if(C26_IS_8GB)
+                sdram_size = PHYS_DRAM_IS_6GB;
 
 	end1 = (sc_faddr_t)PHYS_SDRAM_1 + PHYS_SDRAM_1_SIZE;
-	end2 = (sc_faddr_t)PHYS_SDRAM_2 + PHYS_SDRAM_2_SIZE;
+	end2 = (sc_faddr_t)PHYS_SDRAM_2 + sdram_size;
+#else
+	end1 = (sc_faddr_t)PHYS_SDRAM_1 + PHYS_SDRAM_1_SIZE;
+        end2 = (sc_faddr_t)PHYS_SDRAM_2 + PHYS_SDRAM_2_SIZE;
+#endif
+	
 	for (mr = 0; mr < 64; mr++) {
 		err = get_owned_memreg(mr, &start, &end);
 		if (!err) {
@@ -1394,9 +1411,24 @@ int dram_init_banksize(void)
 	sc_faddr_t start, end, end1, end2;
 	int i = 0;
 	int err;
+#if defined CONFIG_TARGET_SECO_IMX8QM_C26
+	unsigned long long sdram_size;
+
+        if(C26_IS_1GB)
+                sdram_size = 0x0;
+        if(C26_IS_2GB)
+                sdram_size = 0x0;
+        if(C26_IS_4GB)
+                sdram_size = PHYS_DRAM_IS_2GB;
+        if(C26_IS_8GB)
+                sdram_size = PHYS_DRAM_IS_6GB;
 
 	end1 = (sc_faddr_t)PHYS_SDRAM_1 + PHYS_SDRAM_1_SIZE;
-	end2 = (sc_faddr_t)PHYS_SDRAM_2 + PHYS_SDRAM_2_SIZE;
+	end2 = (sc_faddr_t)PHYS_SDRAM_2 + sdram_size;
+#else
+	end1 = (sc_faddr_t)PHYS_SDRAM_1 + PHYS_SDRAM_1_SIZE;
+        end2 = (sc_faddr_t)PHYS_SDRAM_2 + PHYS_SDRAM_2_SIZE;
+#endif
 
 	for (mr = 0; mr < 64 && i < CONFIG_NR_DRAM_BANKS; mr++) {
 		err = get_owned_memreg(mr, &start, &end);
@@ -1446,11 +1478,30 @@ static u64 get_block_attrs(sc_faddr_t addr_start)
 {
 	u64 attr = PTE_BLOCK_MEMTYPE(MT_DEVICE_NGNRNE) | PTE_BLOCK_NON_SHARE |
 		PTE_BLOCK_PXN | PTE_BLOCK_UXN;
+#if defined CONFIG_TARGET_SECO_IMX8QM_C26
+        unsigned long long sdram_size;
+
+        if(C26_IS_1GB)
+                sdram_size = 0x0;
+        if(C26_IS_2GB)
+                sdram_size = 0x0;
+        if(C26_IS_4GB)
+                sdram_size = PHYS_DRAM_IS_2GB;
+        if(C26_IS_8GB)
+                sdram_size = PHYS_DRAM_IS_6GB;
+	
+	if ((addr_start >= PHYS_SDRAM_1 &&
+             addr_start <= ((sc_faddr_t)PHYS_SDRAM_1 + PHYS_SDRAM_1_SIZE)) ||
+            (addr_start >= PHYS_SDRAM_2 &&
+             addr_start <= ((sc_faddr_t)PHYS_SDRAM_2 + sdram_size)))
+#else
 
 	if ((addr_start >= PHYS_SDRAM_1 &&
 	     addr_start <= ((sc_faddr_t)PHYS_SDRAM_1 + PHYS_SDRAM_1_SIZE)) ||
 	    (addr_start >= PHYS_SDRAM_2 &&
 	     addr_start <= ((sc_faddr_t)PHYS_SDRAM_2 + PHYS_SDRAM_2_SIZE)))
+#endif
+
 #ifdef CONFIG_IMX_TRUSTY_OS
 		return (PTE_BLOCK_MEMTYPE(MT_NORMAL) | PTE_BLOCK_INNER_SHARE);
 #else
@@ -1463,10 +1514,24 @@ static u64 get_block_attrs(sc_faddr_t addr_start)
 static u64 get_block_size(sc_faddr_t addr_start, sc_faddr_t addr_end)
 {
 	sc_faddr_t end1, end2;
+#if defined CONFIG_TARGET_SECO_IMX8QM_C26
+        unsigned long long sdram_size;
 
+        if(C26_IS_1GB)
+                sdram_size = 0x0;
+        if(C26_IS_2GB)
+                sdram_size = 0x0;
+        if(C26_IS_4GB)
+                sdram_size = PHYS_DRAM_IS_2GB;
+        if(C26_IS_8GB)
+                sdram_size = PHYS_DRAM_IS_6GB;
+	
+	end1 = (sc_faddr_t)PHYS_SDRAM_1 + PHYS_SDRAM_1_SIZE;
+        end2 = (sc_faddr_t)PHYS_SDRAM_2 + sdram_size;
+#else
 	end1 = (sc_faddr_t)PHYS_SDRAM_1 + PHYS_SDRAM_1_SIZE;
 	end2 = (sc_faddr_t)PHYS_SDRAM_2 + PHYS_SDRAM_2_SIZE;
-
+#endif
 	if (addr_start >= PHYS_SDRAM_1 && addr_start <= end1) {
 		if ((addr_end + 1) > end1)
 			return end1 - addr_start;
