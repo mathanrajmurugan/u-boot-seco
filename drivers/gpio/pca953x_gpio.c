@@ -33,6 +33,7 @@
 #define PCA953X_OUTPUT          1
 #define PCA953X_INVERT          2
 #define PCA953X_DIRECTION       3
+#define PCA953X_PULLUP		0x23
 
 #define PCA_GPIO_MASK           0x00FF
 #define PCA_INT                 0x0100
@@ -305,7 +306,15 @@ static int pca953x_probe(struct udevice *dev)
 		dev_err(dev, "Error reading direction register\n");
 		return ret;
 	}
-
+#if defined CONFIG_TARGET_SECO_IMX8MM_C61
+	/* Enable internal pull-up */	
+	memset(val, 0xff, MAX_BANK);
+	ret = pca953x_write_regs(dev, PCA953X_PULLUP, val);
+        if (ret) {
+                dev_err(dev, "Error writing pull-up pull-down register\n");
+                return ret;
+        }
+#endif
 	tmp = dev_read_prop(dev, "label", &size);
 
 	if (tmp) {

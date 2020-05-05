@@ -42,3 +42,20 @@ typedef enum  {
 #define ROOT_DEV_ID_U_SD      __stringify(ROOT_ID_USD)"\0"
 #define ROOT_DEV_ID_EXT_SD    __stringify(ROOT_ID_EXT_SD)"\0"
 
+int c26_get_board_configuration (void);
+
+typedef enum {
+	RAM_1GB = 0,
+	RAM_2GB = 0x1,
+	RAM_4GB	= 0x2,
+	RAM_8GB = 0x3,
+} RAM_STRAPS;
+
+#define GET_C26_STRAPS	(c26_get_board_configuration())
+
+
+
+#define C26_IS_1GB 	(GET_C26_STRAPS == RAM_1GB)
+#define C26_IS_2GB      (GET_C26_STRAPS == RAM_2GB)
+#define C26_IS_4GB      (GET_C26_STRAPS == RAM_4GB)
+#define C26_IS_8GB      (GET_C26_STRAPS == RAM_8GB)

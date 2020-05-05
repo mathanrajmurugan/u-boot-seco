@@ -41,13 +41,10 @@
 //#if defined CONFIG_TARGET_SECO_IMX8MQ_C20
 //#include <c20_ram_setup.h>
 //#endif
-//#if defined CONFIG_TARGET_SECO_IMX8MM_C61
-//#include <c61_ram_setup.h>
-//#endif
 //#if defined CONFIG_TARGET_SECO_IMX8MM_C72
 //#include <c72_ram_setup.h>
 //#endif
-#if defined(CONFIG_TARGET_SECO_IMX8QM_C26) || defined(CONFIG_TARGET_SECO_IMX8QXP_C57)
+#if defined(CONFIG_TARGET_SECO_IMX8QM_C26) || defined(CONFIG_TARGET_SECO_IMX8QXP_C57) || defined CONFIG_TARGET_SECO_IMX8MM_C61
 #include <seco_imx8_env.h>
 #endif
 
@@ -281,20 +278,6 @@ DECLARE_GLOBAL_DATA_PTR;
 #define ROOT_DEV_ID_EXT_SD    __stringify(ROOT_ID_EXT_SD)"\0"
 #endif
 
-
-#if defined(CONFIG_TARGET_SECO_IMX8MM_C61)
-#define BOOT_DEV_ID_EMMC      __stringify(BOOT_ID_EMMC)"\0"
-#define BOOT_DEV_ID_U_SD      __stringify(BOOT_ID_USD)"\0"
-#define BOOT_DEV_ID_EXT_SD    __stringify(BOOT_ID_EXT_SD)"\0"
-#define BOOT_DEV_ID_SPI       "0"
-#define BOOT_DEV_ID_SATA      "0"
-#define BOOT_DEV_ID_USB       "0"
-
-#define ROOT_DEV_ID_EMMC      __stringify(ROOT_ID_EMMC)"\0"
-#define ROOT_DEV_ID_U_SD      __stringify(ROOT_ID_USD)"\0"
-#define ROOT_DEV_ID_EXT_SD    __stringify(ROOT_ID_EXT_SD)"\0"
-#endif
-
 #if defined(CONFIG_TARGET_SECO_IMX8MM_C72)
 #define BOOT_DEV_ID_EMMC      __stringify(BOOT_ID_EMMC)"\0"
 #define BOOT_DEV_ID_U_SD      __stringify(BOOT_ID_USD)"\0"
@@ -317,11 +300,9 @@ DECLARE_GLOBAL_DATA_PTR;
 /*  __________________________________________________________________________
  * |__________________________ CONFIG_TARGET_SECO_IMX8MQ_C12_______________________|
  *  _______________________________________________________________________________
- * |__________________________ CONFIG_TARGET_SECO_IMX8MM_C61_______________________|
- *  _______________________________________________________________________________
  * |__________________________ CONFIG_TARGET_SECO_IMX8MM_C72_______________________|
  */
-#if defined(CONFIG_TARGET_SECO_IMX8MQ_C12) || defined(CONFIG_TARGET_SECO_IMX8MM_C61) || defined(CONFIG_TARGET_SECO_IMX8MM_C72)
+#if defined(CONFIG_TARGET_SECO_IMX8MQ_C12) || defined(CONFIG_TARGET_SECO_IMX8MM_C72)
 static data_boot_dev_t kern_dev_list [] = {
 	{ DEV_EMMC,     "eMMC onboard",   ENV_KERNEL_SRC_MMC,    BOOT_DEV_ID_EMMC,    LOAD_ADDR_KERNEL_LOCAL_DEV,   "Image" },
 	{ DEV_U_SD,     "uSD onboard",    ENV_KERNEL_SRC_USD,    BOOT_DEV_ID_U_SD,    LOAD_ADDR_KERNEL_LOCAL_DEV,   "Image" },
@@ -564,27 +545,6 @@ static overlay_struct_mode_t overlay_addons_list [] = {
         { "HDMI IN", "seco-imx8qm-c43-hdmi-in.dtbo"},
 };
 #endif
-#if defined CONFIG_TARGET_SECO_IMX8MM_C61
-static overlay_struct_mode_t overlay_video_mode_list [] = {
-	{ "No video", "no dtbo" },
-        { "eDP LCDIF-1920x1080", "seco-imx8mm-c61-lcdif-sn65dsi86.dtbo"},
-        { "LVDS LCDIF-1920x1080", "seco-imx8mm-c61-lcdif-sn65dsi84.dtbo"},
-};
-
-static overlay_struct_mode_t overlay_addons_list [] = {
-        { "No addons", "" },
-        { "OV5640 CSI0", "seco-imx8mm-c61-ov5640.dtbo"},
-        { "PORT1 RS232", "seco-imx8mm-c61-port1-rs232.dtbo"},
-        { "PORT1 RS485", "seco-imx8mm-c61-port1-rs485.dtbo"},
-        { "PORT1 CAN", "seco-imx8mm-c61-port1-can.dtbo"},
-        { "PORT1 GPIOs", "seco-imx8mm-c61-port1-gpios.dtbo"},
-        { "PORT2 RS232", "seco-imx8mm-c61-port2-rs232.dtbo"},
-        { "PORT2 RS485", "seco-imx8mm-c61-port2-rs485.dtbo"},
-        { "PORT2 CAN", "seco-imx8mm-c61-port2-can.dtbo"},
-        { "PORT2 GPIOs", "seco-imx8mm-c61-port2-gpios.dtbo"},
-        { "MODEM Support", "seco-imx8mm-c61-modem.dtbo"},
-};
-#endif
 
 #if defined CONFIG_TARGET_SECO_IMX8MM_C72
 static overlay_struct_mode_t overlay_video_mode_list [] = {
@@ -763,9 +723,6 @@ char *do_ramsize (ulong min, ulong max) {
         #define MAX_DEVICE 4
 #endif
 #ifdef CONFIG_TARGET_SECO_IMX8MQ_C12
-	#define MAX_DEVICE 4
-#endif
-#ifdef CONFIG_TARGET_SECO_IMX8MM_C61
 	#define MAX_DEVICE 4
 #endif
 #ifdef CONFIG_TARGET_SECO_IMX8MM_C72

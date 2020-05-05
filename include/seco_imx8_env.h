@@ -12,6 +12,9 @@
 #if defined CONFIG_TARGET_SECO_IMX8QXP_C57
 #include <seco/seco_imx8qxp_c57_setup.h>
 #endif
+#if defined CONFIG_TARGET_SECO_IMX8MM_C61
+#include <seco/seco_imx8mm_c61_setup.h>
+#endif
 
 /*
  *  FDT 

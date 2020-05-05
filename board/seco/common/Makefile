@@ -62,6 +62,8 @@ obj-$(CONFIG_POWER_PFUZE100)	+= pfuze.o
 obj-$(CONFIG_$(SPL_)DM_PMIC_PFUZE100)	+= pfuze.o
 obj-$(CONFIG_POWER_MC34VR500)	+= mc34vr500.o
 obj-$(CONFIG_MXC_EPDC)		+= epdc_setup.o
+obj-$(CONFIG_TARGET_SECO_IMX8QM_C26) += seco_imx8qm_c26_setup.o
+obj-$(CONFIG_TARGET_SECO_IMX8MM_C61) += seco_imx8mm_c61_setup.o
 obj-y				+= mmc.o
 ifdef CONFIG_FSL_FASTBOOT
 obj-${CONFIG_ANDROID_RECOVERY} += recovery_keypad.o
