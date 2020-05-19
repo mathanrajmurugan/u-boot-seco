@@ -32,9 +32,6 @@
 #include <onenand_uboot.h>
 #include <mmc.h>
 #include <watchdog.h>
-//#if defined CONFIG_TARGET_SECO_IMX8MQ_C12
-//#include <c12_ram_setup.h>
-//#endif
 //#if defined CONFIG_TARGET_SECO_IMX8MQ_C25
 //#include <c25_ram_setup.h>
 //#endif
@@ -44,7 +41,8 @@
 //#if defined CONFIG_TARGET_SECO_IMX8MM_C72
 //#include <c72_ram_setup.h>
 //#endif
-#if defined(CONFIG_TARGET_SECO_IMX8QM_C26) || defined(CONFIG_TARGET_SECO_IMX8QXP_C57) || defined CONFIG_TARGET_SECO_IMX8MM_C61
+#if defined(CONFIG_TARGET_SECO_IMX8QM_C26) || defined(CONFIG_TARGET_SECO_IMX8QXP_C57) || defined CONFIG_TARGET_SECO_IMX8MM_C61 ||\
+	defined CONFIG_TARGET_SECO_IMX8MQ_C12
 #include <seco_imx8_env.h>
 #endif
 
@@ -225,19 +223,6 @@ DECLARE_GLOBAL_DATA_PTR;
 	"booti ${kernel_loadaddr} - ${fdt_loadaddr}"
 
 
-#if defined(CONFIG_TARGET_SECO_IMX8MQ_C12)
-#define BOOT_DEV_ID_EMMC      __stringify(BOOT_ID_EMMC)"\0"
-#define BOOT_DEV_ID_U_SD      __stringify(BOOT_ID_USD)"\0"
-#define BOOT_DEV_ID_EXT_SD    __stringify(BOOT_ID_EXT_SD)"\0"
-#define BOOT_DEV_ID_SPI       "0"
-#define BOOT_DEV_ID_SATA      "0"
-#define BOOT_DEV_ID_USB       "0"
-
-#define ROOT_DEV_ID_EMMC      __stringify(ROOT_ID_EMMC)"\0"
-#define ROOT_DEV_ID_U_SD      __stringify(ROOT_ID_USD)"\0"
-#define ROOT_DEV_ID_EXT_SD    __stringify(ROOT_ID_EXT_SD)"\0"
-#endif
-
 #if defined(CONFIG_TARGET_SECO_IMX8MQ_C25)
 #define BOOT_DEV_ID_EMMC      __stringify(BOOT_ID_EMMC)"\0"
 #define BOOT_DEV_ID_U_SD      __stringify(BOOT_ID_USD)"\0"
@@ -298,11 +283,9 @@ DECLARE_GLOBAL_DATA_PTR;
  * |__________________________________________________________________________|
  */
 /*  __________________________________________________________________________
- * |__________________________ CONFIG_TARGET_SECO_IMX8MQ_C12_______________________|
- *  _______________________________________________________________________________
  * |__________________________ CONFIG_TARGET_SECO_IMX8MM_C72_______________________|
  */
-#if defined(CONFIG_TARGET_SECO_IMX8MQ_C12) || defined(CONFIG_TARGET_SECO_IMX8MM_C72)
+#if defined(CONFIG_TARGET_SECO_IMX8MM_C72)
 static data_boot_dev_t kern_dev_list [] = {
 	{ DEV_EMMC,     "eMMC onboard",   ENV_KERNEL_SRC_MMC,    BOOT_DEV_ID_EMMC,    LOAD_ADDR_KERNEL_LOCAL_DEV,   "Image" },
 	{ DEV_U_SD,     "uSD onboard",    ENV_KERNEL_SRC_USD,    BOOT_DEV_ID_U_SD,    LOAD_ADDR_KERNEL_LOCAL_DEV,   "Image" },
@@ -331,7 +314,7 @@ static data_boot_dev_t filesystem_dev_list [] = {
 	{ DEV_NFS,      "NFS",            ENV_FS_SRC_NFS,     "",                  "" },
 	{ DEV_USB,      "USB",            ENV_FS_SRC_USB,     "",                  "" },
 };
-#endif   /*  defined(CONFIG_TARGET_SECO_IMX8MQ_C12)  */
+#endif   /*  defined(CONFIG_TARGET_SECO_IMX8MM_C72)  */
 
 /*  __________________________________________________________________________
  * |__________________________ CONFIG_TARGET_SECO_IMX8MQ_C25_______________________|
@@ -484,21 +467,6 @@ typedef struct lvds_video_spec {
  * |__________________________________________________________________________|
  */
 
-#if defined CONFIG_TARGET_SECO_IMX8MQ_C12
-static overlay_struct_mode_t overlay_video_mode_list [] = {
-        { "HDMI FULLHD", "no dtbo" },
-        { "HDMI 4K", "no dtbo" },
-	{ "LVDS DCSS-1920x1080", "seco-imx8mq-c12-dcss-sn65dsi84.dtbo"},
-        { "LVDS LCDIF-1920x1080", "seco-imx8mq-c12-lcdif-sn65dsi84.dtbo"},
-        { "HDMI + LVDS 1920x1080","seco-imx8mq-c12-dual-display.dtbo"},
-};
-
-static overlay_struct_mode_t overlay_addons_list [] = {
-	{ "No addons", "" },
-        { "Wilink Support", "seco-imx8mq-c12-wilink.dtbo"},
-	{ "Can RTC Support", "seco-imx8mq-c12-can-rtc.dtbo"},
-};
-#endif
 #if defined CONFIG_TARGET_SECO_IMX8MQ_C25
 static overlay_struct_mode_t overlay_video_mode_list [] = {
         { "HDMI FULLHD", "no dtbo" },
@@ -710,9 +678,6 @@ char *do_ramsize (ulong min, ulong max) {
 #define MIN_PARTITION_ID 1
 #define MAX_PARTITION_ID 9
 
-#ifdef CONFIG_TARGET_SECO_IMX8MQ_C12
-	#define MAX_DEVICE 4
-#endif
 #ifdef CONFIG_TARGET_SECO_IMX8MQ_C25
         #define MAX_DEVICE 4
 #endif
@@ -721,9 +686,6 @@ char *do_ramsize (ulong min, ulong max) {
 #endif
 #ifdef CONFIG_TARGET_SECO_IMX8QM_C43
         #define MAX_DEVICE 4
-#endif
-#ifdef CONFIG_TARGET_SECO_IMX8MQ_C12
-	#define MAX_DEVICE 4
 #endif
 #ifdef CONFIG_TARGET_SECO_IMX8MM_C72
 	#define MAX_DEVICE 4
@@ -1152,6 +1114,15 @@ int selection_addons_overlay_files (overlay_struct_mode_t overlay_addons_list[],
 		if (!((hex2int(ch) < 1) || (hex2int(ch) > num_element))) {	
 	                printf ("%c\n", ch);
 			selection |= (1<<(hex2int(ch)-1));
+#if defined CONFIG_TARGET_SECO_IMX8QM_C26
+			if(selection == (1<<HDMI_IN | 1<<OV5640_CSI0) || 
+				selection == (1<<HDMI_IN | 1<<OV5640_CSI1) ||
+				selection == (1<<HDMI_IN | 1<<OV5640_CSI0 | 1<<OV5640_CSI1 )) {
+				printf ("%c invalid options - you can't choose HDMI_IN with OV5640\n", ch);
+				ch = '0';
+				selection = 0;
+			}
+#endif
 		
 		}
  	} while ((int)ch != 0xd && hex2int(ch) != 1); /* 0xd return value */
@@ -1205,7 +1176,7 @@ int selection_video_overlay_files (overlay_struct_mode_t overlay_video_mode_list
 			if(C12_HAS_HDMI) {
 	                        printf ("%c\n", ch);
 			} else {
-				if (ctoi(ch) == 1 || ctoi(ch) == 4) {
+				if (atoi(&ch) == HDMI || atoi(&ch) == HDMI_LVDS) {
 					printf ("%c invalid options - this board has not hdmi\n", ch);
 					ch = '0';
 				}
@@ -1235,18 +1206,11 @@ int selection_video_overlay_files (overlay_struct_mode_t overlay_video_mode_list
 	/*Mantain overlay selection, dont override "selection" variable*/
 
 	#else
-
-		/* Disable Overlay Load for first Option */
-		if(selection & 0x1) { /* HDMI FULLHD selection */
-			env_set("options","drm_kms_helper.edid_firmware=edid/1920x1080.bin\0");
+		/* C12 disable Overlay Load for first Option */
+		if(selection & (1<<NO_VIDEO))  
 			selection = 0;
-		} else if(selection & 0x2) { /* HDMI 4K selction */
-			env_set("options","drm_kms_helper.edid_firmware=edid/3840x2160.bin\0");
-			selection = 0;
-		} else if(selection & 0x4) /* lvds with dcss support */
-			env_set("options","drm_kms_helper.edid_firmware=edid/1920x1080.bin\0");
 		else
-			env_set ("options", "\0"); /* Clean Fixed edid option for LVDS output*/
+			env_set ("options", "\0"); /* Clean Fixed edid option */
 	#endif
 #else
 	if(selection & (1<<HDMI)) { /* HDMI FULLHD selection */

@@ -64,6 +64,7 @@ obj-$(CONFIG_POWER_MC34VR500)	+= mc34vr500.o
 obj-$(CONFIG_MXC_EPDC)		+= epdc_setup.o
 obj-$(CONFIG_TARGET_SECO_IMX8QM_C26) += seco_imx8qm_c26_setup.o
 obj-$(CONFIG_TARGET_SECO_IMX8MM_C61) += seco_imx8mm_c61_setup.o
+obj-$(CONFIG_TARGET_SECO_IMX8MQ_C12) += seco_imx8mq_c12_setup.o
 obj-y				+= mmc.o
 ifdef CONFIG_FSL_FASTBOOT
 obj-${CONFIG_ANDROID_RECOVERY} += recovery_keypad.o

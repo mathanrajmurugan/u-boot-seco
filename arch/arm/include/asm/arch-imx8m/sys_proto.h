@@ -18,4 +18,7 @@ bool is_usb_boot(void);
 #ifdef CONFIG_IMX8MQ
 bool check_dcss_fused(void);
 #endif
+struct mx8_spl_data {
+        uint16_t         fw_revision;
+};
 #endif

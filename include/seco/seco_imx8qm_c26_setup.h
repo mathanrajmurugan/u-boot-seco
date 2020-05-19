@@ -14,21 +14,22 @@
 */
 
 typedef enum {
-      HDMI = 0,
-      HDMI_4K,
-      LVDS_S,
-      LVDS_D,
-      DP,
-      LVDS_HDMI,
-      LVDS_DP,
-      NUM_VIDEO_MODES,
+	HDMI = 0,
+	HDMI_4K,
+	LVDS_S,
+	LVDS_D,
+	DP,
+	LVDS_HDMI,
+	LVDS_DP,
+	NUM_VIDEO_MODES,
 } VIDEO_MODES;
 
 typedef enum  {
-      NOADDONS = 0,
-      OV5640_CSI0,
-      OV5640_CSI1,
-      NUM_ADDONS,
+	NOADDONS = 0,
+	OV5640_CSI0,
+	OV5640_CSI1,
+	HDMI_IN,
+	NUM_ADDONS,
 } ADDONS;
 
 #define BOOT_DEV_ID_EMMC      __stringify(BOOT_ID_EMMC)"\0"

@@ -134,6 +134,7 @@ typedef struct global_data {
 	struct spl_handoff *spl_handoff;
 # endif
 #endif
+	u16 fwrev;
 } gd_t;
 #endif
 
